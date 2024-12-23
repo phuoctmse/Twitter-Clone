@@ -1,16 +1,12 @@
 import express from 'express'
+import usersRouter from './routes/users.routes'
 const app = express()
 const port = 3000
-
-const sum = (obj: { a: number; b: number }) => {
-  return obj.a + obj.b
-}
-
-app.get('/', (req, res) => {
-  const total = sum({ a: 1, b: 2 })
-  res.send(`total : ${total}`)
-})
+app.use(express.json())
+app.use('/users', usersRouter)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+module.exports = usersRouter
