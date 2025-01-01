@@ -1,9 +1,13 @@
-import express, { Request, Response, NextFunction } from 'express'
+import express from 'express'
 import usersRouter from './routes/users.routes'
 import databaseServices from './services/database.services'
+import { defaultErrorHandler } from './middlewares/errors.middlewares'
 
 const app = express()
 const port = 3000
+
+// Connect to database
+databaseServices.connect()
 
 // Middleware
 app.use(express.json())
@@ -12,16 +16,10 @@ app.use(express.json())
 app.use('/users', usersRouter)
 
 //Error handling
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.log('Error: ', err.message)
-  res.status(500).json({ error: err.message })
-})
+app.use(defaultErrorHandler)
 // Start server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })
-
-// Connect to database
-databaseServices.connect()
 
 export default app
