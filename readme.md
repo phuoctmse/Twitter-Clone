@@ -1,6 +1,6 @@
-# Twitter Clone
+# Twitter Api
 
-This is a Twitter clone project built with Node.js, Express, TypeScript, and MongoDB.
+This is a Twitter api project built with Node.js, Express, TypeScript, and MongoDB.
 
 ## Getting Started
 
