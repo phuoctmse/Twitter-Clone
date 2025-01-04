@@ -1,18 +1,55 @@
 import { Request, Response, NextFunction } from 'express'
 import { checkSchema } from 'express-validator'
 import USER_MESSAGES from '~/constants/messages'
-// import { ErrorWithStatus } from '~/models/Errors'
-// import databaseServices from '~/services/database.services'
+import databaseServices from '~/services/database.services'
 import userService from '~/services/users.services'
 import { validate } from '~/utils/validation'
 
-export const loginValidation = (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body
-  if (!email || !password) {
-    res.status(400).json({ message: 'Email and password are required' })
-  }
-  next()
-}
+export const loginValidation = validate(
+  checkSchema({
+    email: {
+      isEmail: {
+        errorMessage: USER_MESSAGES.EMAIL_IS_INVALID
+      },
+      trim: true,
+      custom: {
+        options: async (value, { req }) => {
+          const user = await databaseServices.users.findOne({ email: value })
+          if (user === null) {
+            throw new Error(USER_MESSAGES.USER_NOT_FOUND)
+          }
+          req.user = user
+          return user
+        }
+      }
+    },
+    password: {
+      notEmpty: {
+        errorMessage: USER_MESSAGES.PASSWORD_IS_REQUIRED
+      },
+      isString: {
+        errorMessage: USER_MESSAGES.PASSWORD_MUST_BE_A_STRING
+      },
+      isLength: {
+        errorMessage: USER_MESSAGES.PASSWORD_LENGTH_MUST_BE_FROM_6_TO_50,
+        options: {
+          min: 6,
+          max: 50
+        }
+      },
+      isStrongPassword: {
+        errorMessage: USER_MESSAGES.PASSWORD_MUST_BE_STRONG,
+        options: {
+          minLength: 6,
+          minLowercase: 1,
+          minUppercase: 1,
+          minNumbers: 1,
+          minSymbols: 1
+        }
+      }
+    }
+  })
+)
 
 export const registerValidation = validate(
   checkSchema({
@@ -46,7 +83,7 @@ export const registerValidation = validate(
           if (isExistEmail) {
             throw new Error(USER_MESSAGES.EMAIL_ALREADY_EXISTS)
           }
-          return isExistEmail
+          return true
         }
       }
     },
@@ -80,7 +117,7 @@ export const registerValidation = validate(
         errorMessage: USER_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED
       },
       custom: {
-        options: (value: any, { req }: { req: Request }) => {
+        options: (value: any, { req }) => {
           if (value !== req.body.password) {
             throw new Error(USER_MESSAGES.CONFIRM_PASSWORD_MUST_BE_THE_SAME_AS_PASSWORD)
           }
