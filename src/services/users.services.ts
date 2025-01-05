@@ -4,6 +4,10 @@ import { RegisterReqBody } from '~/models/requests/User.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType } from '~/constants/enums'
+import { ObjectId } from 'mongodb'
+import RefreshToken from '~/models/schemas/RefreshToken.schema'
+import { config } from 'dotenv'
+config()
 
 class UserService {
   private signAccessToken(userId: string) {
@@ -42,6 +46,9 @@ class UserService {
     )
     const userId = result.insertedId.toString()
     const [accessToken, refreshToken] = await this.signAccessAnhRefreshTokens(userId)
+    await databaseServices.refreshTokens.insertOne(
+      new RefreshToken({ user_id: new ObjectId(userId), token: refreshToken })
+    )
     return {
       accessToken,
       refreshToken
@@ -53,8 +60,11 @@ class UserService {
     return user
   }
 
-  async login(user_id: string) {
-    const [accessToken, refreshToken] = await this.signAccessAnhRefreshTokens(user_id)
+  async login(userId: string) {
+    const [accessToken, refreshToken] = await this.signAccessAnhRefreshTokens(userId)
+    await databaseServices.refreshTokens.insertOne(
+      new RefreshToken({ user_id: new ObjectId(userId), token: refreshToken })
+    )
     return {
       accessToken,
       refreshToken
