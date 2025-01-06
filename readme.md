@@ -15,8 +15,8 @@ This is a Twitter api project built with Node.js, Express, TypeScript, and Mongo
 1. Clone the repository:
 
 ```sh
-git clone https://github.com/phuoctmse/twitter-clone.git
-cd twitter-clone
+git clone https://github.com/phuoctmse/twitter-api.git
+cd twitter-api
 ```
 
 2. Install dependencies:
