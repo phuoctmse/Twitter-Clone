@@ -21,7 +21,8 @@ const USER_MESSAGES = {
   DATE_OF_BIRTH_MUST_BE_ISO8601: 'Date of birth must be ISO8601',
   USER_NOT_FOUND: 'User not found',
   LOGIN_SUCCESS: 'Login success',
-  REGISTER_SUCCESS: 'Register success'
+  REGISTER_SUCCESS: 'Register success',
+  ACCESS_TOKEN_IS_REQUIRED: 'Access token is required'
 } as const
 
 export default USER_MESSAGES
