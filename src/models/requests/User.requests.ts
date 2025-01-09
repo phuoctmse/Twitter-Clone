@@ -1,5 +1,5 @@
-import { JwtPayload } from "jsonwebtoken"
-import { TokenType } from "~/constants/enums"
+import { JwtPayload } from 'jsonwebtoken'
+import { TokenType } from '~/constants/enums'
 
 export interface RegisterReqBody {
   name: string
@@ -9,6 +9,10 @@ export interface RegisterReqBody {
 }
 
 export interface LogoutReqBody {
+  refresh_token: string
+}
+
+export interface RefreshTokenReqBody {
   refresh_token: string
 }
 

@@ -16,7 +16,7 @@ app.use(express.json())
 app.use('/users', usersRouter)
 
 //Error handling
-app.use(defaultErrorHandler)
+app.use(defaultErrorHandler as any)
 // Start server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)

@@ -5,7 +5,12 @@ import {
   registerValidation,
   refreshTokenValidation
 } from '../middlewares/users.middlewares'
-import { loginController, logoutController, registerController } from '~/controllers/users.controllers'
+import {
+  loginController,
+  logoutController,
+  refreshTokenController,
+  registerController
+} from '~/controllers/users.controllers'
 import { wrapRequestHandler } from '~/utils/handlers'
 const usersRouter = Router()
 
@@ -34,4 +39,12 @@ usersRouter.post('/register', registerValidation, wrapRequestHandler(registerCon
  * Body: { refresh_token: string }
  */
 usersRouter.post('/logout', accessTokenValidation, refreshTokenValidation, wrapRequestHandler(logoutController))
+
+/**
+ * Path: /refresh-token
+ * Method: POST
+ * Description: Refresh a user's access token
+ * Body: { refresh_token: string }
+ */
+usersRouter.post('/refresh-token', refreshTokenValidation, wrapRequestHandler(refreshTokenController))
 export default usersRouter
