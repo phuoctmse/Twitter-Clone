@@ -3,11 +3,12 @@ import databaseServices from './database.services'
 import { RegisterReqBody } from '~/models/requests/User.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
-import { TokenType } from '~/constants/enums'
+import { TokenType, UserVerifyStatus } from '~/constants/enums'
 import { ObjectId } from 'mongodb'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import { config } from 'dotenv'
 import USER_MESSAGES from '~/constants/messages'
+import { update } from 'lodash'
 config()
 
 class UserService {
@@ -114,15 +115,15 @@ class UserService {
   }
 
   async verifyEmail(user_id: string) {
-    await databaseServices.users.updateOne(
-      { _id: new ObjectId(user_id) },
+    await databaseServices.users.updateOne({ _id: new ObjectId(user_id) }, [
       {
         $set: {
-          email_verify_token: ''
-        },
-        $currentDate: { updated_at: true }
+          email_verify_token: '',
+          verify: UserVerifyStatus.Verified,
+          updated_at: '$$NOW'
+        }
       }
-    )
+    ])
     return {
       message: USER_MESSAGES.EMAIL_VERIFIED_SUCCESS
     }
