@@ -25,16 +25,13 @@ export const registerController = async (
 ): Promise<void> => {
   const { name, email, password, date_of_birth } = req.body
   const result = await userService.register({ name, email, password, date_of_birth })
-  res.json({
+  res.status(HTTP_STATUS.CREATED).json({
     message: USER_MESSAGES.REGISTER_SUCCESS,
     result
   })
 }
 
-export const logoutController = async (
-  req: Request<ParamsDictionary, any, LogoutReqBody>,
-  res: Response
-): Promise<void> => {
+export const logoutController = async (req: Request<ParamsDictionary, any, LogoutReqBody>, res: Response) => {
   const { refresh_token } = req.body
   const result = await userService.logout(refresh_token)
   res.json(result)
@@ -43,12 +40,33 @@ export const logoutController = async (
 export const refreshTokenController = async (
   req: Request<ParamsDictionary, any, RefreshTokenReqBody>,
   res: Response
-): Promise<void> => {
+) => {
   const { refresh_token } = req.body
   const { userId } = req.decode_authorization as TokenPayload
   const result = await userService.refreshToken(userId, refresh_token)
   res.json({
     message: USER_MESSAGES.REFRESH_TOKEN_SUCCESS,
+    result
+  })
+}
+
+export const emailVerifyValidationController = async (req: Request, res: Response) => {
+  const { userId } = req.decoded_email_verified_token as TokenPayload
+  const user = await databaseServices.users.findOne({ _id: new ObjectId(userId) })
+  // Check if user is not found
+  if (!user) {
+    res.status(HTTP_STATUS.NOT_FOUND).json({
+      message: USER_MESSAGES.USER_NOT_FOUND
+    })
+  }
+  // Check if user's email is already verified
+  if (user?.email_verify_token === '') {
+    res.json({
+      message: USER_MESSAGES.EMAIL_ALREADY_VERIFIED
+    })
+  }
+  const result = await userService.verifyEmail(userId)
+  res.json({
     result
   })
 }

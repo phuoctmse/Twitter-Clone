@@ -3,9 +3,11 @@ import {
   loginValidation,
   accessTokenValidation,
   registerValidation,
-  refreshTokenValidation
+  refreshTokenValidation,
+  emailVerifyTokenValidation
 } from '../middlewares/users.middlewares'
 import {
+  emailVerifyValidationController,
   loginController,
   logoutController,
   refreshTokenController,
@@ -47,4 +49,12 @@ usersRouter.post('/logout', accessTokenValidation, refreshTokenValidation, wrapR
  * Body: { refresh_token: string }
  */
 usersRouter.post('/refresh-token', refreshTokenValidation, wrapRequestHandler(refreshTokenController))
+
+/**
+ * Path: /verify-email
+ * Method: POST
+ * Description: Verify a user's email
+ * Body: { refresh_token: string }
+ */
+usersRouter.post('/verify-email', emailVerifyTokenValidation, wrapRequestHandler(emailVerifyValidationController))
 export default usersRouter
