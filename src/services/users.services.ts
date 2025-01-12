@@ -118,9 +118,9 @@ class UserService {
       { _id: new ObjectId(user_id) },
       {
         $set: {
-          email_verify_token: '',
-          updated_at: new Date()
-        }
+          email_verify_token: ''
+        },
+        $currentDate: { updated_at: true }
       }
     )
     return {
