@@ -3,12 +3,19 @@ import { NextFunction, ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 import HTTP_STATUS from '~/constants/httpStatus'
 import USER_MESSAGES from '~/constants/messages'
-import { LogoutReqBody, RefreshTokenReqBody, RegisterReqBody, TokenPayload } from '~/models/requests/User.requests'
+import {
+  EmailVerifyReqBody,
+  LoginReqBody,
+  LogoutReqBody,
+  RefreshTokenReqBody,
+  RegisterReqBody,
+  TokenPayload
+} from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schema'
 import databaseServices from '~/services/database.services'
 import userService from '~/services/users.services'
 
-export const loginController = async (req: Request, res: Response) => {
+export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
   const user = req.user as User
   const userId = user._id as ObjectId
   const result = await userService.login(userId.toString())
@@ -50,7 +57,7 @@ export const refreshTokenController = async (
   })
 }
 
-export const emailVerifyController = async (req: Request, res: Response) => {
+export const emailVerifyController = async (req: Request<ParamsDictionary, any, EmailVerifyReqBody>, res: Response) => {
   const { userId } = req.decoded_email_verified_token as TokenPayload
   const user = await databaseServices.users.findOne({ _id: new ObjectId(userId) })
   // Check if user is not found

@@ -60,10 +60,10 @@ usersRouter.post('/refresh-token', refreshTokenValidation, wrapRequestHandler(re
 usersRouter.post('/verify-email', emailVerifyTokenValidation, wrapRequestHandler(emailVerifyController))
 
 /**
- * Path: /verify-email
+ * Path: /resend-verify-email
  * Method: POST
- * Description: Verify a user's email
- * Body: { refresh_token: string }
+ * Description: Resend verify a user's email
+ * Headers: { Authorization: Bearer <access_token> }
  */
 usersRouter.post('/resend-verify-email', accessTokenValidation, wrapRequestHandler(resendEmailVerifyController))
 export default usersRouter
