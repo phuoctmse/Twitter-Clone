@@ -7,11 +7,12 @@ import {
   emailVerifyTokenValidation
 } from '../middlewares/users.middlewares'
 import {
-  emailVerifyValidationController,
+  emailVerifyController,
   loginController,
   logoutController,
   refreshTokenController,
-  registerController
+  registerController,
+  resendEmailVerifyController
 } from '~/controllers/users.controllers'
 import { wrapRequestHandler } from '~/utils/handlers'
 const usersRouter = Router()
@@ -56,5 +57,13 @@ usersRouter.post('/refresh-token', refreshTokenValidation, wrapRequestHandler(re
  * Description: Verify a user's email
  * Body: { refresh_token: string }
  */
-usersRouter.post('/verify-email', emailVerifyTokenValidation, wrapRequestHandler(emailVerifyValidationController))
+usersRouter.post('/verify-email', emailVerifyTokenValidation, wrapRequestHandler(emailVerifyController))
+
+/**
+ * Path: /verify-email
+ * Method: POST
+ * Description: Verify a user's email
+ * Body: { refresh_token: string }
+ */
+usersRouter.post('/resend-verify-email', accessTokenValidation, wrapRequestHandler(resendEmailVerifyController))
 export default usersRouter

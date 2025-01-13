@@ -50,7 +50,7 @@ export const refreshTokenController = async (
   })
 }
 
-export const emailVerifyValidationController = async (req: Request, res: Response) => {
+export const emailVerifyController = async (req: Request, res: Response) => {
   const { userId } = req.decoded_email_verified_token as TokenPayload
   const user = await databaseServices.users.findOne({ _id: new ObjectId(userId) })
   // Check if user is not found
@@ -66,6 +66,27 @@ export const emailVerifyValidationController = async (req: Request, res: Respons
     })
   }
   const result = await userService.verifyEmail(userId)
+  res.json({
+    result
+  })
+}
+
+export const resendEmailVerifyController = async (req: Request, res: Response) => {
+  const { userId } = req.decode_authorization as TokenPayload
+  const user = await databaseServices.users.findOne({ _id: new ObjectId(userId) })
+  // Check if user is not found
+  if (!user) {
+    res.status(HTTP_STATUS.NOT_FOUND).json({
+      message: USER_MESSAGES.USER_NOT_FOUND
+    })
+  }
+  // Check if user's email is already verified
+  if (user?.email_verify_token === '') {
+    res.json({
+      message: USER_MESSAGES.EMAIL_ALREADY_VERIFIED
+    })
+  }
+  const result = await userService.resendVerifyEmail(userId)
   res.json({
     result
   })
