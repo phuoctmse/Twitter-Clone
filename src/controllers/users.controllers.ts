@@ -5,6 +5,7 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import USER_MESSAGES from '~/constants/messages'
 import {
   EmailVerifyReqBody,
+  forgotPasswordReqBody,
   LoginReqBody,
   LogoutReqBody,
   RefreshTokenReqBody,
@@ -97,4 +98,13 @@ export const resendEmailVerifyController = async (req: Request, res: Response) =
   res.json({
     result
   })
+}
+
+export const forgotPasswordController = async (
+  req: Request<ParamsDictionary, any, forgotPasswordReqBody>,
+  res: Response
+) => {
+  const { _id } = req.user as User
+  const result = await userService.forgotPassword((_id as ObjectId).toString())
+  res.json(result)
 }

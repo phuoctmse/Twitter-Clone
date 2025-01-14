@@ -4,10 +4,12 @@ import {
   accessTokenValidation,
   registerValidation,
   refreshTokenValidation,
-  emailVerifyTokenValidation
+  emailVerifyTokenValidation,
+  forgotPasswordTokenValidation
 } from '../middlewares/users.middlewares'
 import {
   emailVerifyController,
+  forgotPasswordController,
   loginController,
   logoutController,
   refreshTokenController,
@@ -66,4 +68,13 @@ usersRouter.post('/verify-email', emailVerifyTokenValidation, wrapRequestHandler
  * Headers: { Authorization: Bearer <access_token> }
  */
 usersRouter.post('/resend-verify-email', accessTokenValidation, wrapRequestHandler(resendEmailVerifyController))
+
+/**
+ * Path: /forgot-password
+ * Method: POST
+ * Description: Forgot password
+ * Body: { email: string }
+ */
+usersRouter.post('/forgot-password', forgotPasswordTokenValidation, wrapRequestHandler(forgotPasswordController))
+
 export default usersRouter

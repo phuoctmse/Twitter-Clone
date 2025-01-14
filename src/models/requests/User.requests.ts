@@ -20,6 +20,10 @@ export interface RefreshTokenReqBody {
   refresh_token: string
 }
 
+export interface forgotPasswordReqBody {
+  email: string
+}
+
 export interface EmailVerifyReqBody {
   email_verify_token: string
 }
