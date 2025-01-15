@@ -5,11 +5,12 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import USER_MESSAGES from '~/constants/messages'
 import {
   EmailVerifyReqBody,
-  forgotPasswordReqBody,
+  ForgotPasswordReqBody,
   LoginReqBody,
   LogoutReqBody,
   RefreshTokenReqBody,
   RegisterReqBody,
+  ResetPasswordReqBody,
   TokenPayload,
   verifyForgotPasswordReqBody
 } from '~/models/requests/User.requests'
@@ -102,7 +103,7 @@ export const resendEmailVerifyController = async (req: Request, res: Response) =
 }
 
 export const forgotPasswordController = async (
-  req: Request<ParamsDictionary, any, forgotPasswordReqBody>,
+  req: Request<ParamsDictionary, any, ForgotPasswordReqBody>,
   res: Response
 ) => {
   const { _id } = req.user as User
@@ -117,4 +118,14 @@ export const verifyForgotPasswordController = async (
   res.json({
     message: USER_MESSAGES.VERIFY_FORGOT_PASSWORD_SUCCESS
   })
+}
+
+export const resetPasswordController = async (
+  req: Request<ParamsDictionary, any, ResetPasswordReqBody>,
+  res: Response
+) => {
+  const { userId } = req.decoded_forgot_password_token as TokenPayload
+  const { password } = req.body
+  const result = await userService.resetPassword(userId, password)
+  res.json(result)
 }

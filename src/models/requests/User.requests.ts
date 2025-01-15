@@ -20,8 +20,13 @@ export interface RefreshTokenReqBody {
   refresh_token: string
 }
 
-export interface forgotPasswordReqBody {
+export interface ForgotPasswordReqBody {
   email: string
+}
+
+export interface ResetPasswordReqBody {
+  password: string
+  confirm_password: string
 }
 
 export interface verifyForgotPasswordReqBody {
