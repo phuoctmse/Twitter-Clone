@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { capitalize } from 'lodash'
+import { ObjectId } from 'mongodb'
 import HTTP_STATUS from '~/constants/httpStatus'
 import USER_MESSAGES from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -281,4 +282,50 @@ export const forgotPasswordTokenValidation = validate(
     },
     ['body']
   )
+)
+
+export const verifyForgotPasswordTokenValidation = validate(
+  checkSchema({
+    forgot_password_token: {
+      trim: true,
+      custom: {
+        options: async (value: string, { req }) => {
+          if (!value) {
+            throw new ErrorWithStatus({
+              message: USER_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
+              status: HTTP_STATUS.UNAUTHORIZED
+            })
+          }
+          try {
+            const decoded_forgot_password_token = await verifyAccessToken({
+              token: value,
+              secretKey: process.env.JWT_FORGOT_PASSWORD_TOKEN as string
+            })
+            const { user_id } = decoded_forgot_password_token
+            const user = await databaseServices.users.findOne({ _id: new ObjectId(user_id) })
+            if (!user) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGES.USER_NOT_FOUND,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            if (user.forgot_password_token !== value) {
+              throw new ErrorWithStatus({
+                message: USER_MESSAGES.INVALID_FORGOT_PASSWORD_TOKEN,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+            req.decoded_forgot_password_token = decoded_forgot_password_token
+          } catch (error) {
+            if (error instanceof JsonWebTokenError) {
+              throw new ErrorWithStatus({
+                message: capitalize(error.message),
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+          }
+        }
+      }
+    }
+  })
 )
