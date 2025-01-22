@@ -12,6 +12,7 @@ import {
 import {
   emailVerifyController,
   forgotPasswordController,
+  getMyProfileController,
   loginController,
   logoutController,
   refreshTokenController,
@@ -100,5 +101,13 @@ usersRouter.post(
  * Body: { forgot_password_token: string, password: string, confirm_password: string }
  */
 usersRouter.post('/reset-password', resetPasswordValidation, wrapRequestHandler(resetPasswordController))
+
+/**
+ * Path: /my-profile
+ * Method: GET
+ * Description: Get my profile
+ * Headers: { Authorization: Bearer <access_token> }
+ */
+usersRouter.get('/my-profile', accessTokenValidation, wrapRequestHandler(getMyProfileController))
 
 export default usersRouter
